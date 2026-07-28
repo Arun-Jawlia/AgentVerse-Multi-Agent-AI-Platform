@@ -8,6 +8,7 @@ const UserSchema = new Schema(
     firebaseUID: {
       type: String,
       unique: true,
+      required: true
     },
     email: {
       type: String,
@@ -21,5 +22,5 @@ const UserSchema = new Schema(
   },
 );
 
-const User = new model("User", UserSchema);
+const User =  model("User", UserSchema);
 export { User };

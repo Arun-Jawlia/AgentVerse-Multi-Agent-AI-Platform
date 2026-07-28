@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import AuthRouter from "./routes/auth.routes.js";
 import cors from 'cors'
+import mongoose, { mongo } from "mongoose";
 dotenv.config();
 
 const port = process.env.PORT || 8001;
@@ -20,7 +21,17 @@ app.get("/", (req, res) => {
   res.json({ msg: "This is Auth Service" });
 });
 
-app.listen(port, () => {
-  console.log(`Auth Service is running on ${port}`);
-  connectDB();
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(port, () => {
+      console.log(`Auth Service is running on ${port}`);
+    });
+    
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+startServer()
