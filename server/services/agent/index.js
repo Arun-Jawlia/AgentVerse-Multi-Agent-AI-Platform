@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 // import connectDB from "./config/db.js";
 // import AuthRouter from "./routes/auth.routes.js";
 import cors from 'cors'
+import AgentRoutes from "./routes/agent.route.js";
 dotenv.config();
 
 const port = process.env.PORT || 8001;
@@ -14,7 +15,7 @@ app.use(cors({
     credentials: true
 }));
 
-// app.use("/", AuthRouter);
+app.use("/", AgentRoutes);
 
 app.get("/", (req, res) => {
   res.json({ msg: "This is Agent Service" });
