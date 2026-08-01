@@ -3,7 +3,7 @@ import { auth, googleProvider } from "../utils/firebase";
 import { api } from "../apis/axios";
 import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from "react-redux";
-import { setUserData } from "../../redux/userSlice";
+import { setUserData } from "../redux/userSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
