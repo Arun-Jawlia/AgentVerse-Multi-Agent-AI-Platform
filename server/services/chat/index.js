@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import cors from 'cors'
 import mongoose, { mongo } from "mongoose";
-import ChatRouter from "./routes/chat.route.js";
+import ChatRoutes from "./routes/chat.route.js";
 dotenv.config();
 
 const port = process.env.PORT || 8001;
@@ -15,7 +15,7 @@ app.use(cors({
     credentials: true
 }));
 
-app.use("/", ChatRouter)
+app.use("/", ChatRoutes)
 
 app.get("/", (req, res) => {
   res.json({ msg: "This is Chat Service" });

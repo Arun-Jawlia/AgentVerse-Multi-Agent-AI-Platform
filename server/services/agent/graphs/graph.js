@@ -61,7 +61,7 @@ workflow.addConditionalEdges(
 
 workflow.addEdge("search", 'chat')
 workflow.addEdge('chat', '__end__')
-workflow.addEdge('coding', '__end__')
+workflow.addEdge('code', '__end__')
 workflow.addEdge('pdf', '__end__')
 workflow.addEdge('ppt', '__end__')
 workflow.addEdge('vision', '__end__')

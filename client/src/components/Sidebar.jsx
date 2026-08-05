@@ -1,12 +1,33 @@
-import { PanelLeftIcon, PenBoxIcon, PenSquare, Plus } from "lucide-react";
+import {
+  Coins,
+  LogOut,
+  MessageSquare,
+  PanelLeftIcon,
+  PanelRight,
+  PenSquare,
+  Plus,
+  User,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { getConversations } from "../features/getConversations";
-import { useDispatch } from "react-redux";
-import { addConversation, setConversations } from "../redux/converstationSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addConversation,
+  setConversations,
+  setSelectedConversation,
+} from "../redux/converstationSlice";
 import { createConversation } from "../features/createConversation";
+import { logout } from "../features/logout";
+import { setUserData } from "../redux/userSlice";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { conversations, selectedConversation } = useSelector(
+    (state) => state.conversation,
+  );
+  const { userData } = useSelector((state) => state.user);
+  const [imageError, setImageError] = useState(false);
+
   const dispatch = useDispatch();
 
   const handleGetConversations = async () => {
@@ -19,9 +40,69 @@ const Sidebar = () => {
     dispatch(addConversation(data));
   };
 
+  const handleSelectConversation = (conv) => {
+    dispatch(setSelectedConversation(conv));
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    dispatch(setUserData(null));
+  };
+
   useEffect(() => {
     handleGetConversations();
-  }, []);
+  }, [userData?._id]);
+
+  if (isCollapsed) {
+    return (
+      <div className="hidden lg:flex flex-col items-center w-14 h-screen ☐ bg-[#0d0f14] border-r border-white/6 py-4 gap-1 shrink-0">
+        <button
+          className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500 
+        hover:text-slate-200 ☐ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent
+            border-none cursor-pointer"
+          onClick={() => setIsCollapsed(false)}
+        >
+          <PanelRight />
+        </button>
+        <button
+          className="flex items-center justify-center w-9 h-9 rounded-xl □text-slate-500 hover:text-slate-200
+hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
+          onClick={handleCreateConversation}
+        >
+          <Plus />
+        </button>
+
+        <div className="flex-1 overflow-y-auto px-2.5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {conversations?.map((conv, i) => {
+            const isActive = selectedConversation?._id === conv?._id;
+            return (
+              <div
+                onClick={() => handleSelectConversation(conv)}
+                className={`flex items-center gap-2.5 cursor-pointer mb-0.5 px-3 py-2.5
+              rounded-[10px] border transition-colors duration-150
+              ${
+                isActive
+                  ? "☐ bg-indigo-500/10 ☐ border-indigo-500/[0.18]"
+                  : "bg-transparent border-transparent"
+              }`}
+              >
+                <div
+                  className={`flex items-center justify-center shrink-0 w-[28px] h-[28px] rounded-lg transition-colors duration-150 ${isActive ? "bg-indigo-500/15 text-indigo-400" : "bg-white/[0.05] text-slate-500"}`}
+                >
+                  <MessageSquare size={13} />
+                </div>
+                {/* <span
+                  className={`text-[13px] font-medium truncate ${isActive ? "text-slate-100" : "text-slate-300"}`}
+                >
+                  {conv?.title || "New Chat"}
+                </span> */}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed lg:static inset-y-0 left-0 z-50 w-[270px] h-screen shrink-0 bg-[#0d0f14] border-r ☐ border-white/[0.06]">
@@ -32,6 +113,7 @@ const Sidebar = () => {
             className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500 
         hover:text-slate-200 ☐ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent
             border-none cursor-pointer"
+            onClick={() => setIsCollapsed(true)}
           >
             <PanelLeftIcon />
           </div>
@@ -65,7 +147,103 @@ const Sidebar = () => {
         </div>
 
         {/* Conversations */}
-        <div></div>
+        {!conversations && conversations.length == 0 ? (
+          <div className="px-5 pt-4 pb-1.5 text-[10.5] font-semibold uppercase tracking-widest">
+            No Conversation
+          </div>
+        ) : (
+          <div className="px-5 pt-4 pb-1.5 text-[10.5] font-semibold uppercase tracking-widest text-slate-600">
+            Recents
+          </div>
+        )}
+        <div className="flex-1 overflow-y-auto px-2.5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {conversations?.map((conv, i) => {
+            const isActive = selectedConversation?._id === conv?._id;
+            return (
+              <div
+                onClick={() => handleSelectConversation(conv)}
+                className={`flex items-center gap-2.5 cursor-pointer mb-0.5 px-3 py-2.5
+              rounded-[10px] border transition-colors duration-150
+              ${
+                isActive
+                  ? "☐ bg-indigo-500/10 ☐ border-indigo-500/[0.18]"
+                  : "bg-transparent border-transparent"
+              }`}
+              >
+                <div
+                  className={`flex items-center justify-center shrink-0 w-[28px] h-[28px] rounded-lg transition-colors duration-150 ${isActive ? "bg-indigo-500/15 text-indigo-400" : "bg-white/[0.05] text-slate-500"}`}
+                >
+                  <MessageSquare size={13} />
+                </div>
+                <span
+                  className={`text-[13px] font-medium truncate ${isActive ? "text-slate-100" : "text-slate-300"}`}
+                >
+                  {conv?.title || "New Chat"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Divider */}
+        <div className="mx-2.5 h-px bg-white/[0.06]" />
+
+        {/* Profile Section */}
+        <div className="p-3.5">
+          {userData ? (
+            <div
+              className="flex items-center gap-2.5 cursor-pointer rounded-x1 px-3 py-2.5
+            hover:bg-white/[0.05] transition-colors duration-150"
+            >
+              <div className="relative shrink-0">
+                {userData?.avatar || !imageError ? (
+                  <img
+                    className="w-9 h-9 rounded-[10px] object-cover border-2 border-indigo-500/25"
+                    src={userData?.avatar}
+                    alt={"Profile Pic"}
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-[10px] bg-white/0.06 flex items-center justify-center">
+                    <User size={15} className="text-slate-400" />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13.5px] font-semibold |text-slate-100 truncate">
+                  {userData?.name || "user"}
+                </p>
+                <p className="text-[11px] ☐ text-slate-600 mt-px">
+                  {"Free Plan"}
+                </p>
+              </div>
+              <div className="flex gap-1">
+                <button
+                  className="flex items-center justify-center w-7 h-7 rounded-[7px]
+border-none bg-transparent ☐ text-yellow-600 cursor-pointer ☐ hover: bg-white/[0.08] hover: text-slate-400 transition-all duration-150"
+                >
+                  <Coins size={16} />
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center w-7 h-7 rounded-[7px]
+border-none bg-transparent ☐ text-slate-600 cursor-pointer ☐ hover:bg-white/[0.08]
+hover:text-slate-400 transition-all duration-150"
+                >
+                  <LogOut size={16} />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              className="w-full flex items-center justify-center gap-2 text-sm font-medium
+            text-slate-200 ☐ bg-white/[0.05] border ☐ border-white/[0.08] rounded-xl py-[11px]
+            cursor-pointer □ hover:bg-white/[0.08] transition-colors duration-150"
+            >
+              Login
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

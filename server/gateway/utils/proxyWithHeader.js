@@ -6,6 +6,8 @@ export const proxyWithHeader = (serviceUrl) => {
       if (scrReq.user) {
         proxyReqOpts.headers["x-user-id"] = scrReq.user.userId;
       }
+
+      return proxyReqOpts;
     },
   };
   return proxy(serviceUrl, customHeaders);

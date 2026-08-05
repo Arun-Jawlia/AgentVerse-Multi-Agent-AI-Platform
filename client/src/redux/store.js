@@ -5,6 +5,6 @@ import conversationReducer from './converstationSlice'
 export const store = configureStore({
   reducer: {
     user: userReducer,
-    converstation : conversationReducer
+    conversation : conversationReducer
   },
 })
