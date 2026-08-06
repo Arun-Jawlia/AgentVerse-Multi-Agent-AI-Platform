@@ -1,10 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit'
-import  userReducer  from './userSlice'
-import conversationReducer from './converstationSlice'
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./userSlice";
+import conversationReducer from "./converstationSlice";
+import messageReducer from "./messageSlice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
-    conversation : conversationReducer
+    conversation: conversationReducer,
+    message: messageReducer,
   },
-})
+});

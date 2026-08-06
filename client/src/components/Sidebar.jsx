@@ -9,16 +9,15 @@ import {
   User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getConversations } from "../features/getConversations";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addConversation,
   setConversations,
   setSelectedConversation,
 } from "../redux/converstationSlice";
-import { createConversation } from "../features/createConversation";
 import { logout } from "../features/logout";
 import { setUserData } from "../redux/userSlice";
+import { createConversation, getConversations } from "../features/chat";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -69,10 +68,10 @@ const Sidebar = () => {
 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
           onClick={handleCreateConversation}
         >
-          <Plus />
+          <Plus size={17} />
         </button>
 
-        <div className="flex-1 overflow-y-auto px-2.5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex-1 overflow-y-auto px-2.5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-5">
           {conversations?.map((conv, i) => {
             const isActive = selectedConversation?._id === conv?._id;
             return (
@@ -87,7 +86,7 @@ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none 
               }`}
               >
                 <div
-                  className={`flex items-center justify-center shrink-0 w-[28px] h-[28px] rounded-lg transition-colors duration-150 ${isActive ? "bg-indigo-500/15 text-indigo-400" : "bg-white/[0.05] text-slate-500"}`}
+                  className={`flex items-center justify-center shrink-0 w-[20px] h-[20px] rounded-lg transition-colors duration-150 ${isActive ? "bg-indigo-500/15 text-indigo-400" : "bg-white/[0.05] text-slate-500"}`}
                 >
                   <MessageSquare size={13} />
                 </div>
@@ -99,6 +98,21 @@ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none 
               </div>
             );
           })}
+        </div>
+
+        <div className="relative shrink-0">
+          {userData?.avatar && !imageError ? (
+            <img
+              className="w-8 h-8 rounded-[10px] object-cover border-2 border-indigo-500/25"
+              src={userData?.avatar}
+              alt={"Profile Pic"}
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-[10px] bg-white/0.06 flex items-center justify-center">
+              <User size={15} className="text-slate-400" />
+            </div>
+          )}
         </div>
       </div>
     );
@@ -196,7 +210,7 @@ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none 
             hover:bg-white/[0.05] transition-colors duration-150"
             >
               <div className="relative shrink-0">
-                {userData?.avatar || !imageError ? (
+                {userData?.avatar && !imageError ? (
                   <img
                     className="w-9 h-9 rounded-[10px] object-cover border-2 border-indigo-500/25"
                     src={userData?.avatar}

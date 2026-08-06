@@ -1,8 +1,8 @@
 import { api } from "../apis/axios";
 
-export const getCurrentUser = async () => {
+export const logout = async () => {
   try {
-    const { data } = await api.get("/api/me");
+    const { data } = await api.get("/api/auth/logout");
     return data
   } catch (error) {
     console.log(error);
