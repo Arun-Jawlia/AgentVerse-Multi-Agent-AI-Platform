@@ -1,7 +1,5 @@
 import express from "express";
 import dotenv from "dotenv";
-// import connectDB from "./config/db.js";
-// import AuthRouter from "./routes/auth.routes.js";
 import cors from 'cors'
 import AgentRoutes from "./routes/agent.route.js";
 dotenv.config();

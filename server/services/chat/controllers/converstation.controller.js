@@ -3,7 +3,6 @@ import Conversation from "../models/converstation.model.js";
 export const createConverstation = async (req, res) => {
   try {
     const userId = req.headers["x-user-id"];
-    console.log("userId", userId);
 
     const converstation = await Conversation.create({
       userId: userId,

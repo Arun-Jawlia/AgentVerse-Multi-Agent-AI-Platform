@@ -9,7 +9,7 @@ export const saveMessage = async (req, res) => {
       role,
       content,
     });
-    return res.status(500).json({
+    return res.status(200).json({
       message: `message created`,
     });
   } catch (error) {
@@ -23,7 +23,7 @@ export const getMessages = async (req, res) => {
     const { conversationId } = req.params;
     const messages = await Message.find({
       conversationId,
-    }).sort({ createdAt: -1 });
+    })
     return res.status(200).json(messages);
   } catch (error) {
     return res.status(500).json({

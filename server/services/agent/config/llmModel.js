@@ -1,10 +1,10 @@
 import { ChatGroq } from "@langchain/groq";
 import { ChatGoogle } from "@langchain/google";
-
-console.log(process.env.GROQ_API_KEY)
+import dotenv from 'dotenv'
+dotenv.config()
 
 const groq = new ChatGroq({
-  apiKey: 'GROQ_API_KEY',
+  apiKey: process.env.GROQ_API_KEY,
   model: "openai/gpt-oss-120b",
   temperature: 0,
   // maxTokens: undefined,
@@ -14,7 +14,7 @@ const groq = new ChatGroq({
 
 const gemini = new ChatGoogle("gemini-2.5-flash");
 
-export const getModel = async (agent) => {
+export const getModel = (agent) => {
   switch (agent) {
     case "chat":
       return groq;
