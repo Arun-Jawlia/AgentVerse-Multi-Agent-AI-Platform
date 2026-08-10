@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from 'cors'
 import AgentRoutes from "./routes/agent.route.js";
+import redis from "../../shared/redis/redis.js";
 dotenv.config();
 
 const port = process.env.PORT || 8001;
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 const startServer = async () => {
   try {
     // await connectDB();
+    // await redis.flushall()
     app.listen(port, () => {
       console.log(`Agent Service is running on ${port}`);
     });

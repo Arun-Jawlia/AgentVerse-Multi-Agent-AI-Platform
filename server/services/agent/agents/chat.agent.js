@@ -1,10 +1,15 @@
+import {
+  AIMessage,
+  HumanMessage,
+  SystemMessage,
+} from "@langchain/core/messages";
 import { getMemory } from "../config/llmMemory.js";
 import { getModel } from "../config/llmModel.js";
 
 export const chatAgent = async (state) => {
   const llm = getModel("chat");
-  const history = await getMemory(state.conversationId)
-  const messages = []
+  console.log(state)
+  const history = await getMemory(state.conversationId);
   const systemPrompt = `
   You are AgentVerse, An intelligent AI Assistant. 
 
@@ -21,19 +26,21 @@ export const chatAgent = async (state) => {
   - Keep paragraphs short and readable.
   - Never write headings and content on the same line.
   - Never generate large walls of text.
-  
-  
+
   `;
-  const response = await llm.invoke([
-    {
-      role: "system",
-      content: systemPrompt,
-    },
-    {
-      role: "human",
-      content: state.prompt,
-    },
-  ]);
+  const messages = [new SystemMessage(systemPrompt)];
+
+  history.forEach((msg) => {
+    if (msg.role === "user") {
+      messages.push(new HumanMessage(msg.content));
+    }
+    if (msg.role === "assistant") {
+      messages.push(new AIMessage(msg.content));
+    }
+  });
+
+  messages.push(new HumanMessage(state.prompt));
+  const response = await llm.invoke(messages);
 
   return {
     ...state,
