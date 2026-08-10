@@ -3,10 +3,10 @@ import { getMessages } from "../utils/getMessage.js";
 
 export const getMemory = async (conversationId) => {
   const key = `messages-${conversationId}`;
-  // const cached = await redis.get(key);
-  // if (cached) {
-  //   return JSON.parse(cached);
-  // }
+  const cached = await redis.get(key);
+  if (cached) {
+    return JSON.parse(cached);
+  }
 
   const messages = await getMessages(conversationId);
 

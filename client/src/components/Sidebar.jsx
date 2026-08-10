@@ -57,7 +57,7 @@ const Sidebar = () => {
       <div className="hidden lg:flex flex-col items-center w-14 h-screen ☐ bg-[#0d0f14] border-r border-white/6 py-4 gap-1 shrink-0">
         <button
           className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500 
-        hover:text-slate-200 ☐ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent
+        hover:text-slate-200 ☐ hover:bg-white/5 transition-colors duration-150 bg-transparent
             border-none cursor-pointer"
           onClick={() => setIsCollapsed(false)}
         >
@@ -65,13 +65,13 @@ const Sidebar = () => {
         </button>
         <button
           className="flex items-center justify-center w-9 h-9 rounded-xl □text-slate-500 hover:text-slate-200
-hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
+hover:bg-white/5 transition-colors duration-150 bg-transparent border-none cursor-pointer"
           onClick={handleCreateConversation}
         >
           <Plus size={17} />
         </button>
 
-        <div className="flex-1 overflow-y-auto px-2.5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-5">
+        <div className="flex-1 overflow-y-auto px-2.5 pb-2 scrollbar-none [&::-webkit-scrollbar]:hidden pt-5">
           {conversations?.map((conv, i) => {
             const isActive = selectedConversation?._id === conv?._id;
             return (
@@ -81,7 +81,7 @@ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none 
               rounded-[10px] border transition-colors duration-150
               ${
                 isActive
-                  ? "☐ bg-indigo-500/10 ☐ border-indigo-500/[0.18]"
+                  ? "☐ bg-indigo-500/10 ☐ border-indigo-500/18"
                   : "bg-transparent border-transparent"
               }`}
               >

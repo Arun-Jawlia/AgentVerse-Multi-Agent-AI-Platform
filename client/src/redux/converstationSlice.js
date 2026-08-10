@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   conversations: [],
-  selectedConversation: null
+  selectedConversation: null,
 };
 
 export const conversationSlice = createSlice({
@@ -16,10 +16,24 @@ export const conversationSlice = createSlice({
       state.conversations.unshift(action.payload);
     },
     setSelectedConversation: (state, action) => {
-      state.selectedConversation = action.payload
+      state.selectedConversation = action.payload;
+    },
+    setConversationTitle: (state, action) => {
+      const { title, conversationId } = action.title;
+      state.conversations = state.conversations.map((conv) => {
+        conv._id === conversationId ? { ...conv, title } : conv;
+      });
+
+      if (state.selectedConversation._id === conversationId) {
+        state.selectedConversation = {
+          ...state.selectedConversation,
+          title,
+        };
+      }
     },
   },
 });
 
-export const { setConversations, addConversation, setSelectedConversation } = conversationSlice.actions;
+export const { setConversations, addConversation, setSelectedConversation, setConversationTitle } =
+  conversationSlice.actions;
 export default conversationSlice.reducer;

@@ -11,7 +11,7 @@ const ChatArea = () => {
   const dispatch = useDispatch();
 
   const handleGetMessage = async () => {
-    const  data  = await getMessages(selectedConversation?._id);
+    const data = await getMessages(selectedConversation?._id);
     dispatch(setMessages(data));
   };
 
@@ -20,6 +20,9 @@ const ChatArea = () => {
       dispatch(setMessages([]));
       return;
     }
+
+    if (selectedConversation.title == "New Chat") return;
+
     handleGetMessage();
   }, [selectedConversation?._id]);
 

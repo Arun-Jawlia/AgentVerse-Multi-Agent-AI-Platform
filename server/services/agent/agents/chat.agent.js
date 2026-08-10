@@ -8,7 +8,7 @@ import { getModel } from "../config/llmModel.js";
 
 export const chatAgent = async (state) => {
   const llm = getModel("chat");
-  console.log(state)
+  // console.log(state)
   const history = await getMemory(state.conversationId);
   const systemPrompt = `
   You are AgentVerse, An intelligent AI Assistant. 
