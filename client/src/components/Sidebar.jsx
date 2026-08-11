@@ -11,13 +11,12 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addConversation,
   setConversations,
   setSelectedConversation,
 } from "../redux/converstationSlice";
 import { logout } from "../features/logout";
 import { setUserData } from "../redux/userSlice";
-import { createConversation, getConversations } from "../features/chat";
+import { getConversations } from "../features/chat";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -28,28 +27,12 @@ const Sidebar = () => {
   const [imageError, setImageError] = useState(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsCollapsed(window.innerWidth < 768);
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   const handleGetConversations = async () => {
     const data = await getConversations();
     dispatch(setConversations(data));
   };
 
-  const handleCreateConversation = async () => {
-    // const data = await createConversation();
-    // dispatch(addConversation(data));
+  const handleNewConversation = async () => {
     dispatch(setSelectedConversation(null));
   };
 
@@ -80,7 +63,7 @@ const Sidebar = () => {
         <button
           className="flex items-center justify-center w-9 h-9 rounded-xl □text-slate-500 hover:text-slate-200
 hover:bg-white/5 transition-colors duration-150 bg-transparent border-none cursor-pointer"
-          onClick={handleCreateConversation}
+          onClick={handleNewConversation}
         >
           <Plus size={17} />
         </button>
@@ -134,7 +117,7 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
 
   return (
     <div
-      className="        fixed lg:static
+      className="hidden lg:flex
         inset-y-0 left-0 z-50
         w-67.5 min-w-67.5
         h-screen shrink-0
@@ -159,7 +142,7 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
             free
           </span>
           <button
-            onClick={handleCreateConversation}
+            onClick={handleNewConversation}
             className="flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500
             hover:text-slate-200 ☐ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent
             border-none cursor-pointer"
@@ -171,7 +154,7 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
         {/* Chats  */}
         <div className="px-4 pt4 pb-1">
           <button
-            onClick={handleCreateConversation}
+            onClick={handleNewConversation}
             className="w-full flex items-center justify-center gap-2 text-sm font-medium text-white
             bg-gradient-to-br ☐ from-indigo-500 □ to-violet-700 rounded-xl py-[10px] border-none cursor-pointer
             hover:opacity-90 transition-opacity duration-150"

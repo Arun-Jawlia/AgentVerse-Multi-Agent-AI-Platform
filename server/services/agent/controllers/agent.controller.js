@@ -25,7 +25,7 @@ export const agent = async (req, res) => {
       conversationId,
       role: "assistant",
       content: response,
-      image: result.images,
+      images: result.images,
     });
     await addMessage(conversationId, "assistant", response);
 

@@ -1,4 +1,4 @@
-import { tavilySearchTool } from "../config/tavily";
+import { tavilySearchTool } from "../config/tavily.js";
 
 export const searchAgent = async (state) => {
   try {

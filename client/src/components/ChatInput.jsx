@@ -70,7 +70,8 @@ const ChatInput = () => {
       dispatch(
         addMessage({
           role: "assistant",
-          content: response,
+          content: response?.answer,
+          images: response?.images
         }),
       );
     } catch (error) {
@@ -116,6 +117,13 @@ const ChatInput = () => {
     },
   ];
 
+const handleKeyDown = (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    handleStartChat()
+  }
+};
+
   return (
     <div className="w-full overflow-hidden px-3 md:px-5 py-4 border-t border-white/6 bg-[#0d0f14]">
       <div className="flex flex-col gap-2 bg-white/8 border border-white/7 rounded-2xl px-4 pt-3.5 pb-3">
@@ -146,6 +154,7 @@ const ChatInput = () => {
           className="w-full bg-transparent outline-none resize-none text-[14px] text-slate-200 placeholder:text-slate-600 leading-relaxed scrollbar-none [&::-webkit-scrollbar]:hidden disabled:opacity-50"
           rows={3}
           value={value}
+          onKeyDown={handleKeyDown}
         />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
