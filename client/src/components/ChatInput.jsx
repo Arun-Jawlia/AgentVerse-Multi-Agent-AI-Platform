@@ -1,4 +1,15 @@
-import { Mic, Paperclip, Send } from "lucide-react";
+import {
+  Code2,
+  FileText,
+  Globe,
+  ImageIcon,
+  MessageSquare,
+  Mic,
+  Paperclip,
+  Presentation,
+  Send,
+  Zap,
+} from "lucide-react";
 import { useState } from "react";
 import { startChat } from "../features/agent";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,55 +24,122 @@ import {
 const ChatInput = () => {
   const [value, setValue] = useState("");
   const { selectedConversation } = useSelector((state) => state.conversation);
+  const [selectedAgent, setSelectedAgent] = useState("auto");
   const dispatch = useDispatch();
 
   const handleStartChat = async () => {
     const trimmedValue = value.trim();
     if (!trimmedValue) return;
 
-    let conversation = selectedConversation;
+    try {
+      let conversation = selectedConversation;
 
-    if (!conversation) {
-      const conv = await createConversation();
-      dispatch(setSelectedConversation(conv));
-      dispatch(addConversation(conv));
-      conversation = conv;
-    }
+      if (!conversation?._id) {
+        conversation = await createConversation();
+        console.log(conversation);
+        dispatch(setSelectedConversation(conversation));
+        dispatch(addConversation(conversation));
+      }
 
-    if (conversation.title == "New Chat") {
-      await updateConversation({ id: conversation._id, title: trimmedValue });
+      const conversationId = conversation._id;
+
+      if (conversation.title == "New Chat") {
+        await updateConversation({ id: conversationId, title: trimmedValue });
+        dispatch(
+          setConversationTitle({
+            conversationId: conversationId,
+            title: trimmedValue,
+          }),
+        );
+      }
       dispatch(
-        setConversationTitle({
-          conversationId: conversation._id,
-          title: trimmedValue,
+        addMessage({
+          role: "user",
+          content: trimmedValue,
         }),
       );
+
+      const payload = {
+        prompt: trimmedValue,
+        conversationId,
+        agent: selectedAgent.toLowerCase(),
+      };
+
+      setValue("");
+      const response = await startChat(payload);
+      dispatch(
+        addMessage({
+          role: "assistant",
+          content: response,
+        }),
+      );
+    } catch (error) {
+      console.error("Failed to start chat:", error);
     }
-
-    const payload = {
-      prompt: trimmedValue,
-      conversationId: conversation._id,
-    };
-
-    dispatch(
-      addMessage({
-        role: "user",
-        content: trimmedValue,
-      }),
-    );
-    setValue("");
-    const response = await startChat(payload);
-    dispatch(
-      addMessage({
-        role: "assistant",
-        content: response,
-      }),
-    );
   };
+
+  const agents = [
+    {
+      id: "auto",
+      icon: Zap,
+      label: "Auto",
+    },
+    {
+      id: "chat",
+      icon: MessageSquare,
+      label: "Chat",
+    },
+    {
+      id: "code",
+      icon: Code2,
+      label: "Coding",
+    },
+    {
+      id: "pdf",
+      icon: FileText,
+      label: "PDF",
+    },
+    {
+      id: "ppt",
+      icon: Presentation,
+      label: "PPT",
+    },
+    {
+      id: "vision",
+      icon: ImageIcon,
+      label: "Image",
+    },
+    {
+      id: "search",
+      icon: Globe,
+      label: "Search",
+    },
+  ];
 
   return (
     <div className="w-full overflow-hidden px-3 md:px-5 py-4 border-t border-white/6 bg-[#0d0f14]">
       <div className="flex flex-col gap-2 bg-white/8 border border-white/7 rounded-2xl px-4 pt-3.5 pb-3">
+        <div className="flex w-[80%] gap-2 pr-2 flex-wrap ">
+          {agents.map((agent) => {
+            const isActive = selectedAgent === agent.id;
+            const Icon = agent.icon;
+
+            return (
+              <div
+                onClick={() => setSelectedAgent(agent.id)}
+                className={` shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium border transition-all cursor-pointer
+            ${isActive ? "bg-linear-to-r from-indigo-500 to-violet-600 text-white border-transparent shadow-[0_1px_8px_rgba(99,102,241,.35)]" : "bg-white/3 text-slate-400 border-white/6 hover:bg-white/7"}            
+            `}
+              >
+                <Icon
+                  size={13}
+                  className={`${isActive ? "text-white" : "text-slate-500"}`}
+                />
+                {agent.label}
+              </div>
+            );
+          })}
+        </div>
         <textarea
           onChange={(e) => setValue(e.target.value)}
           placeholder="Ask Anything..."

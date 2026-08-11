@@ -19,15 +19,15 @@ export const conversationSlice = createSlice({
       state.selectedConversation = action.payload;
     },
     setConversationTitle: (state, action) => {
-      const { title, conversationId } = action.title;
-      state.conversations = state.conversations.map((conv) => {
-        conv._id === conversationId ? { ...conv, title } : conv;
-      });
+      const { title, conversationId } = action.payload;
+      state.conversations = state.conversations.map((conv) => 
+        conv._id === conversationId ? { ...conv, title } : conv
+      );
 
-      if (state.selectedConversation._id === conversationId) {
+      if (state.selectedConversation?._id === conversationId) {
         state.selectedConversation = {
           ...state.selectedConversation,
-          title,
+        title,
         };
       }
     },

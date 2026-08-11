@@ -21,7 +21,10 @@ const ChatArea = () => {
       return;
     }
 
-    if (selectedConversation.title == "New Chat") return;
+    if (selectedConversation.title === "New Chat") {
+      dispatch(setMessages([]));
+      return;
+    }
 
     handleGetMessage();
   }, [selectedConversation?._id]);

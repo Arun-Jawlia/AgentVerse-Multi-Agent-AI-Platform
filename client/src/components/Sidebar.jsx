@@ -26,8 +26,21 @@ const Sidebar = () => {
   );
   const { userData } = useSelector((state) => state.user);
   const [imageError, setImageError] = useState(false);
-
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsCollapsed(window.innerWidth < 768);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleGetConversations = async () => {
     const data = await getConversations();
@@ -35,8 +48,9 @@ const Sidebar = () => {
   };
 
   const handleCreateConversation = async () => {
-    const data = await createConversation();
-    dispatch(addConversation(data));
+    // const data = await createConversation();
+    // dispatch(addConversation(data));
+    dispatch(setSelectedConversation(null));
   };
 
   const handleSelectConversation = (conv) => {
@@ -54,7 +68,7 @@ const Sidebar = () => {
 
   if (isCollapsed) {
     return (
-      <div className="hidden lg:flex flex-col items-center w-14 h-screen ☐ bg-[#0d0f14] border-r border-white/6 py-4 gap-1 shrink-0">
+      <div className="hidden lg:flex flex-col items-center w-14 min-w-14 h-screen bg-[#0d0f14] border-r border-white/[0.06] py-4 gap-1 shrink-0">
         <button
           className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500 
         hover:text-slate-200 ☐ hover:bg-white/5 transition-colors duration-150 bg-transparent
@@ -119,7 +133,14 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
   }
 
   return (
-    <div className="fixed lg:static inset-y-0 left-0 z-50 w-[270px] h-screen shrink-0 bg-[#0d0f14] border-r ☐ border-white/[0.06]">
+    <div
+      className="        fixed lg:static
+        inset-y-0 left-0 z-50
+        w-67.5 min-w-67.5
+        h-screen shrink-0
+        bg-[#0d0f14]
+        border-r border-white/6"
+    >
       <div className="flex flex-col h-full">
         {/* Sidebar Header */}
         <div className="flex items-center gap-2.5 px-4 py-4 border-b border-white/[0.06]">

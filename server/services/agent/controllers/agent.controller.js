@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const agent = async (req, res) => {
   try {
-    const { prompt, conversationId } = req.body;
+    const { prompt, conversationId, agent } = req.body;
 
     await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
       conversationId,
@@ -13,10 +13,11 @@ export const agent = async (req, res) => {
       content: prompt,
     });
 
-    await addMessage(conversationId,'user', prompt)
+    await addMessage(conversationId, "user", prompt);
     const result = await graph.invoke({
       prompt,
       conversationId,
+      agent,
     });
 
     const response = result.aiResponse;
@@ -24,12 +25,16 @@ export const agent = async (req, res) => {
       conversationId,
       role: "assistant",
       content: response,
+      image: result.images,
     });
-    await addMessage(conversationId,'assistant', response)
-    
-    return res.status(200).json(response);
+    await addMessage(conversationId, "assistant", response);
+
+    return res.status(200).json({
+      answer: response,
+      images: result.images || [],
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({
       message: `agent error: ${error}`,
     });
