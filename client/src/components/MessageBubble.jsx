@@ -1,11 +1,23 @@
-import { X } from "lucide-react";
+import { Check, Copy, ExternalLink, X } from "lucide-react";
 import { useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const MessageBubble = ({ role, content, images }) => {
   const isUser = role === "user";
   const [lightBox, setLightBox] = useState(null);
+  const [copied, setCopied] = useState("");
+
+  const handleCopyCode = async (code) => {
+    await navigator.clipboard.writeText(code);
+    setCopied(code);
+
+    setTimeout(() => {
+      setCopied("");
+    }, 2000);
+  };
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
@@ -71,6 +83,78 @@ const MessageBubble = ({ role, content, images }) => {
                 {children}
               </td>
             ),
+            a: ({ href, children }) => (
+              <a
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                className="text-indigo-400 underline inline-flex items-center gap-1"
+              >
+                {children}
+                <ExternalLink size={14} />
+              </a>
+            ),
+            img: ({ src, alt }) => (
+              <img
+                src={src}
+                loading="lazy"
+                alt={alt ?? ""}
+                onError={(e) => e.currentTarget.remove()}
+                className="w-40 h-28 rounded-xl object-cover border-white/10 cursor-zoom-in hover:opacity-90 transition"
+                onClick={() => setLightBox(src)}
+              />
+            ),
+            code: ({ className, children }) => {
+              const value = String(children).trim();
+              const language = className?.replace("language-", "");
+
+              if (!className) {
+                return (
+                  <code className="px-1.5 py-0.5 rounded bg-white/10 text-indigo-200">
+                    {value}
+                  </code>
+                );
+              }
+
+              return (
+                <div className="my-4 overflow-hidden rounded-xl border border-white/10 bg-[#111318]">
+                  <div className="flex items-center justify-between bg-[#1b1d24] border-b border-white/10 px-4 py-2">
+                    <span className="uppercase text-xs text-slate-400">
+                      {language}
+                    </span>
+                    <button
+                      className="flex items-center gap-1 text-xs cursor-pointer"
+                      onClick={() => handleCopyCode(value)}
+                    >
+                      {copied == value ? (
+                        <>
+                          {" "}
+                          <Check size={14} /> Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={14} /> Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <SyntaxHighlighter
+                    language={language}
+                    style={oneDark}
+                    wrapLongLines
+                    showLineNumbers
+                    customStyle={{
+                      margin: 0,
+                      padding: "16px",
+                      background: "#0d1117",
+                      fontSize: "13px",
+                    }}
+                  >
+                    {value}
+                  </SyntaxHighlighter>
+                </div>
+              );
+            },
           }}
         >
           {content}
