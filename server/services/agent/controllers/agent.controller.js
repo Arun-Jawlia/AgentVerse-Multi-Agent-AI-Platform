@@ -26,12 +26,15 @@ export const agent = async (req, res) => {
       role: "assistant",
       content: response,
       images: result.images,
+      artifacts: result.artifacts
     });
     await addMessage(conversationId, "assistant", response);
 
+    console.log(response)
     return res.status(200).json({
       answer: response,
       images: result.images || [],
+      artifacts: result.artifacts || []
     });
   } catch (error) {
     console.log(error);

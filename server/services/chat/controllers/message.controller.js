@@ -2,13 +2,14 @@ import Message from "../models/message.model.js";
 
 export const saveMessage = async (req, res) => {
   try {
-    const { conversationId, role, content, images } = req.body;
+    const { conversationId, role, content, images, artifacts } = req.body;
 
     const message = await Message.create({
       conversationId,
       role,
       content,
-      images
+      images,
+      artifacts
     });
     return res.status(200).json({
       message: `message created`,
