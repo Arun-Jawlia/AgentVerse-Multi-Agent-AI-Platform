@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { startChat } from "../features/agent";
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage } from "../redux/messageSlice";
+import { addMessage, setArtifacts } from "../redux/messageSlice";
 import { createConversation, updateConversation } from "../features/chat";
 import {
   addConversation,
@@ -67,6 +67,7 @@ const ChatInput = () => {
 
       setValue("");
       const response = await startChat(payload);
+      dispatch(setArtifacts(response?.artifacts || []))
       dispatch(
         addMessage({
           role: "assistant",

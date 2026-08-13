@@ -51,9 +51,9 @@ const Sidebar = () => {
 
   if (isCollapsed) {
     return (
-      <div className="hidden lg:flex flex-col items-center w-14 min-w-14 h-screen bg-[#0d0f14] border-r border-white/[0.06] py-4 gap-1 shrink-0">
+      <div className="static lg:flex flex-col items-center w-14 min-w-14 h-screen bg-[#0d0f14] border-r border-white/6 py-4 gap-1 shrink-0">
         <button
-          className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500 
+          className="static lg:flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500 
         hover:text-slate-200 ☐ hover:bg-white/5 transition-colors duration-150 bg-transparent
             border-none cursor-pointer"
           onClick={() => setIsCollapsed(false)}
@@ -117,7 +117,7 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
 
   return (
     <div
-      className="hidden lg:flex
+      className="fixed lg:static
         inset-y-0 left-0 z-50
         w-67.5 min-w-67.5
         h-screen shrink-0
@@ -126,10 +126,10 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
     >
       <div className="flex flex-col h-full">
         {/* Sidebar Header */}
-        <div className="flex items-center gap-2.5 px-4 py-4 border-b border-white/[0.06]">
+        <div className="flex items-center gap-2.5 px-4 py-4 border-b border-white/6">
           <div
-            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500 
-        hover:text-slate-200 ☐ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent
+            className="static lg:flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500 
+        hover:text-slate-200 ☐ hover:bg-white/5 transition-colors duration-150 bg-transparent
             border-none cursor-pointer"
             onClick={() => setIsCollapsed(true)}
           >
@@ -144,7 +144,7 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
           <button
             onClick={handleNewConversation}
             className="flex items-center justify-center w-7 h-7 rounded-lg ☐ text-slate-500
-            hover:text-slate-200 ☐ hover:bg-white/[0.05] transition-colors duration-150 bg-transparent
+            hover:text-slate-200 ☐ hover:bg-white/5 transition-colors duration-150 bg-transparent
             border-none cursor-pointer"
           >
             <PenSquare size={14} />
