@@ -49,6 +49,13 @@ export const codingAgent = async (state) => {
         - Beautiful Spacing
         - Single Page unless user ask otherwise.
 
+        IMAGES 
+        ================================
+
+        Always use real Unsplash Images.
+
+        Never use placeholders.
+
         Return ONLY valid JSON.
 
         Schema: 
@@ -99,6 +106,7 @@ export const codingAgent = async (state) => {
           id: Date.now(),
           type: "Project",
           files: content.files || [],
+          title: state.prompt
         },
       ],
     };
