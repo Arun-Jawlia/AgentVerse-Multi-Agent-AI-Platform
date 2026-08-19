@@ -14,6 +14,7 @@ const artifactsSchema = new mongoose.Schema(
   {
     id: Number,
     type: String,
+    title: String,
     files: [fileSchema],
   },
   {
