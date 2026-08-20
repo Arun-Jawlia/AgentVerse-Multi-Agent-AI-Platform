@@ -7,19 +7,19 @@ import { getMemory } from "../config/llmMemory.js";
 import { getModel } from "../config/llmModel.js";
 
 export const chatAgent = async (state) => {
-  const llm = getModel("chat");
-  // console.log(state)
-  const history = await getMemory(state.conversationId);
+  try {
+    const llm = getModel("chat");
+    const history = await getMemory(state.conversationId);
 
-  const searchContext = state.searchResults
-    ? `
+    const searchContext = state.searchResults
+      ? `
     Web Search Results:
     ${JSON.stringify(state.searchResults)}
     Answer the user using only the above search results.
     `
-    : '';
+      : "";
 
-  const systemPrompt = `
+    const systemPrompt = `
   You are AgentVerse, An intelligent AI Assistant. 
 
   ${searchContext}
@@ -44,22 +44,28 @@ export const chatAgent = async (state) => {
   - Never generate large walls of text.
 
   `;
-  const messages = [new SystemMessage(systemPrompt)];
+    const messages = [new SystemMessage(systemPrompt)];
 
-  history.forEach((msg) => {
-    if (msg.role === "user") {
-      messages.push(new HumanMessage(msg.content));
-    }
-    if (msg.role === "assistant") {
-      messages.push(new AIMessage(msg.content));
-    }
-  });
+    history.forEach((msg) => {
+      if (msg.role === "user") {
+        messages.push(new HumanMessage(msg.content));
+      }
+      if (msg.role === "assistant") {
+        messages.push(new AIMessage(msg.content));
+      }
+    });
 
-  messages.push(new HumanMessage(state.prompt));
-  const response = await llm.invoke(messages);
+    messages.push(new HumanMessage(state.prompt));
+    const response = await llm.invoke(messages);
 
-  return {
-    ...state,
-    aiResponse: response.content,
-  };
+    return {
+      ...state,
+      aiResponse: response.content,
+    };
+  } catch (error) {
+    return {
+      ...state,
+      aiResponse: "Failed to generate response",
+    };
+  }
 };
