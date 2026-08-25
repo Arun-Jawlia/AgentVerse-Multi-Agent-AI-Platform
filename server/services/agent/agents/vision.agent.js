@@ -45,14 +45,12 @@ export const imageGenAgent = async (state) => {
     const downloadUrl = await getFromS3(filename, 24 * 60 * 60);
 
     const customiseRes = `
-    # 📷 Image Generated Successfully
-
     ![Generated Image](${downloadUrl})
 
-    🗃️ [Download Image](${downloadUrl})
+    [Download Image](${downloadUrl})
 
     ⌛Link expires in 10 minutes.
-    
+  
     `;
 
     return {
