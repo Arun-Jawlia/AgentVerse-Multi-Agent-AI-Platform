@@ -54,11 +54,12 @@ export const pdfAgent = async (state) => {
       ...state,
       aiResponse: `
             # PDF Generated
+
             **${data.title}**
             📩 [Download PDF](${downloadURL})
 
             _Link expires in 10 minutes
-            `,
+            `.strip(),
     };
   } catch (error) {
     console.log("PDF Agent", error);

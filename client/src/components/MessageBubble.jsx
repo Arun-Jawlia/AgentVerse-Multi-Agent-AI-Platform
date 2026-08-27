@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-const MessageBubble = ({ role, content, images }) => {
+const MessageBubble = ({ role, content, images = [] }) => {
   const isUser = role === "user";
   const [lightBox, setLightBox] = useState(null);
   const [copied, setCopied] = useState("");
@@ -83,27 +83,34 @@ const MessageBubble = ({ role, content, images }) => {
                 {children}
               </td>
             ),
-            a: ({ href, children }) => (
-              <a
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                className="text-indigo-400 underline inline-flex items-center gap-1"
-              >
-                {children}
-                <ExternalLink size={14} />
-              </a>
-            ),
-            img: ({ src, alt }) => (
-              <img
-                src={src}
-                loading="lazy"
-                alt={alt ?? ""}
-                onError={(e) => e.currentTarget.remove()}
-                className="w-40 h-28 rounded-xl object-cover border-white/10 cursor-zoom-in hover:opacity-90 transition"
-                onClick={() => setLightBox(src)}
-              />
-            ),
+            a: ({ href, children }) => {
+              if (!href) return null;
+
+              return (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-indigo-400 underline break-all hover:text-indigo-300"
+                >
+                  <span>{children}</span>
+                  <ExternalLink size={14} className="shrink-0" />
+                </a>
+              );
+            },
+            img: ({ src, alt }) => {
+              if (!src) return null;
+              return (
+                <img
+                  src={src}
+                  loading="lazy"
+                  alt={alt ?? ""}
+                  onError={(e) => e.currentTarget.remove()}
+                  className="w-40 h-28 rounded-xl object-cover border-white/10 cursor-zoom-in hover:opacity-90 transition"
+                  onClick={() => setLightBox(src)}
+                />
+              );
+            },
             code: ({ className, children }) => {
               const value = String(children).trim();
               const language = className?.replace("language-", "");
@@ -157,7 +164,7 @@ const MessageBubble = ({ role, content, images }) => {
             },
           }}
         >
-          {content}
+          {content?.replace(/^[ \t]+/gm, "").trim()}
         </Markdown>
       </div>
       {lightBox && (
