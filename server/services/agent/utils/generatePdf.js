@@ -41,18 +41,19 @@ export const generatePDF = (data) => {
 
     doc.moveDown(2);
 
+
     // Sections
     data?.sections?.forEach((s) => {
       // title
       doc.fontSize(18).text(s.heading).fillColor("#111827");
 
       doc.moveDown(0.5);
-
+      console.log(s)
       // subtitle
       s?.points?.forEach((p) => {
         doc
           .fontSize(12)
-          .text("⁃ " + p.point, {
+          .text("> " + p, {
             lineGap: 5,
           })
           .fillColor("#374151");

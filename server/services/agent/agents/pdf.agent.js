@@ -38,8 +38,6 @@ export const pdfAgent = async (state) => {
 
     const res = await llm.invoke(prompt);
 
-    console.log(JSON.parse(res.content));
-
     const data = JSON.parse(res.content);
 
     const pdfBuffer = await generatePDF(data);
@@ -59,7 +57,7 @@ export const pdfAgent = async (state) => {
             📩 [Download PDF](${downloadURL})
 
             _Link expires in 10 minutes
-            `.strip(),
+            `,
     };
   } catch (error) {
     console.log("PDF Agent", error);

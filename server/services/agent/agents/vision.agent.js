@@ -51,7 +51,7 @@ export const imageGenAgent = async (state) => {
 
     ⌛Link expires in 10 minutes.
   
-    `.strip();
+    `;
 
     return {
       ...state,
