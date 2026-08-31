@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from 'cors'
 import BillingRoutes from "./routes/billing.route.js";
+import connectDB from "./config/db.js";
 dotenv.config();
 
 const port = process.env.PORT || 8001;
@@ -21,7 +22,7 @@ app.get("/", (req, res) => {
 
 const startServer = async () => {
   try {
-    // await connectDB();
+    await connectDB();
     // await redis.flushall()
     app.listen(port, () => {
       console.log(`Billing Service is running on ${port}`);

@@ -17,9 +17,11 @@ import {
 import { logout } from "../features/logout";
 import { setUserData } from "../redux/userSlice";
 import { getConversations } from "../features/chat";
+import {BillingDrawer} from "./BillingDrawer";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showBillingPopup, setShowBillingPopup] = useState(false);
   const { conversations, selectedConversation } = useSelector(
     (state) => state.conversation,
   );
@@ -237,6 +239,7 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
               </div>
               <div className="flex gap-1">
                 <button
+                  onClick={() => setShowBillingPopup(true)}
                   className="flex items-center justify-center w-7 h-7 rounded-[7px]
 border-none bg-transparent ☐ text-yellow-600 cursor-pointer ☐ hover: bg-white/[0.08] hover: text-slate-400 transition-all duration-150"
                 >
@@ -263,6 +266,10 @@ hover:text-slate-400 transition-all duration-150"
           )}
         </div>
       </div>
+      <BillingDrawer
+        open={showBillingPopup}
+        onClose={() => setShowBillingPopup(false)}
+      />
     </div>
   );
 };

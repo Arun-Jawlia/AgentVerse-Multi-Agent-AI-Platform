@@ -28,6 +28,7 @@ const PaymentSchema = new mongoose.Schema(
       enum: ["created", "paid", "failed"],
       default: "created",
     },
+    amount: Number
   },
   {
     timestamps: true,
