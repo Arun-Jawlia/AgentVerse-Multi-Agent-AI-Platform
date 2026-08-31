@@ -1,6 +1,6 @@
-import { PLANS } from "../config/Plans";
-import razorpay from "../config/razorpay";
-import Payment from "../models/payment.model";
+import { PLANS } from "../config/Plans.js";
+import razorpay from "../config/razorpay.js";
+import Payment from "../models/payment.model.js";
 
 export const createOrder = async (req, res) => {
   try {
