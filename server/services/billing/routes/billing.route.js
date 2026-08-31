@@ -1,5 +1,9 @@
 import express from 'express'
+import { createOrder, verifyPayment } from '../controllers/billing.controllers.js'
 
-const Router = express.Router()
+const router = express.Router()
 
-export default Router
+router.post('/create', createOrder)
+router.post('/verify', verifyPayment)
+
+export default router

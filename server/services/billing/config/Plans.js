@@ -1,21 +1,21 @@
 export const PLANS = {
   free: {
     id: "free",
-    name: "free",
+    name: "Free",
     amount: 0,
     credits: 100,
     validity: 30,
   },
   started: {
     id: "starter",
-    name: "starter",
+    name: "Starter",
     amount: 199,
     credits: 500,
     validity: 30,
   },
   pro: {
     id: "pro",
-    name: "pro",
+    name: "Pro",
     amount: 499,
     credits: 1000,
     validity: 30,
