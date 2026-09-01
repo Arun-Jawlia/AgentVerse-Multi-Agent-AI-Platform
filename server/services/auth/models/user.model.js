@@ -16,14 +16,20 @@ const UserSchema = new Schema(
     avatar: {
       type: String,
     },
-    plan: { type: String, default: "free" },
+    plan: {
+      type: String,
+      enum: ["free", "starter", "pro"],
+      default: "free",
+    },
     credits: {
       type: Number,
       default: 100,
+      min: 0,
     },
     totalCredits: {
       type: Number,
       default: 100,
+      min: 0,
     },
     planExpiresAt: Date,
   },

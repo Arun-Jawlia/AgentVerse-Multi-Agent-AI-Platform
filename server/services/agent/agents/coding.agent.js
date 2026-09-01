@@ -1,5 +1,6 @@
 import { ChatOpenRouter } from "@langchain/openrouter";
 import { getModel } from "../config/llmModel.js";
+import { deductCredits } from "../utils/deductCredits.js";
 
 export const codingAgent = async (state) => {
   const intentLLM = await getModel("intent");
@@ -24,7 +25,6 @@ export const codingAgent = async (state) => {
   );
 
   const intent = intentResponse.content;
-  console.log("Intent Result", intent);
 
   if (intent == "CODE_GENERATION") {
     const prompt = `
@@ -96,6 +96,7 @@ export const codingAgent = async (state) => {
 
     const res = await llm.invoke(prompt);
     // console.log(res)
+    await deductCredits(state.userId, "coding");
     const content = JSON.parse(res.content);
 
     return {
@@ -106,7 +107,7 @@ export const codingAgent = async (state) => {
           id: Date.now(),
           type: "Project",
           files: content.files || [],
-          title: state.prompt
+          title: state.prompt,
         },
       ],
     };
@@ -129,6 +130,8 @@ export const codingAgent = async (state) => {
         User Request:
         ${state.prompt}
     `);
+
+  await deductCredits(state.userId, "coding");
 
   return {
     ...state,

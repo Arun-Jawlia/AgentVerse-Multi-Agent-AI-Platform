@@ -6,6 +6,7 @@ import axios from "axios";
 export const agent = async (req, res) => {
   try {
     const { prompt, conversationId, agent } = req.body;
+    const userId = req.headers['x-user-id']
 
     await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
       conversationId,
@@ -18,6 +19,7 @@ export const agent = async (req, res) => {
       prompt,
       conversationId,
       agent,
+      userId
     });
 
     const response = result.aiResponse;
@@ -39,7 +41,7 @@ export const agent = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: `agent error: ${error}`,
+      message: `agent error: ${error.message}`,
     });
   }
 };

@@ -16,7 +16,7 @@ export const saveMessage = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: `save message controller: ${error}`,
+      message: `save message controller: ${error.message}`,
     });
   }
 };
@@ -29,7 +29,7 @@ export const getMessages = async (req, res) => {
     return res.status(200).json(messages);
   } catch (error) {
     return res.status(500).json({
-      message: `get message controller: ${error}`,
+      message: `get message controller: ${error.message}`,
     });
   }
 };
