@@ -7,11 +7,12 @@ import { imageGenAgent } from "../agents/vision.agent.js";
 import { pdfAgent } from "../agents/pdf.agent.js";
 import { pptAgent } from "../agents/ppt.agent.js";
 import { codingAgent } from "../agents/coding.agent.js";
+import { pdfRagAgent } from "../agents/pdfRag.agent.js";
+import { imgAnalyzerAgent } from "../agents/imgAnalyzer.agent.js";
 
 const workflow = new StateGraph(agentState);
 
 workflow.addNode("router", router);
-
 
 workflow.addNode("chat", chatAgent);
 workflow.addNode("search", searchAgent);
@@ -19,6 +20,8 @@ workflow.addNode("vision", imageGenAgent);
 workflow.addNode("pdf", pdfAgent);
 workflow.addNode("ppt", pptAgent);
 workflow.addNode("code", codingAgent);
+workflow.addNode("pdfRag", pdfRagAgent);
+workflow.addNode("imgAnalyzer", imgAnalyzerAgent);
 
 workflow.addEdge("__start__", "router");
 workflow.addConditionalEdges(
@@ -27,23 +30,20 @@ workflow.addConditionalEdges(
     switch (state.agent) {
       case "chat":
         return "chat";
-        break;
       case "search":
         return "search";
-        break;
       case "code":
         return "code";
-        break;
       case "pdf":
         return "pdf";
-        break;
       case "ppt":
         return "ppt";
-        break;
       case "vision":
         return "vision";
-        break;
-
+      case "pdfRag":
+        return "pdfRag";
+      case "imgAnalyzer":
+        return "imgAnalyzer";
       default:
         return "chat";
     }
@@ -55,16 +55,18 @@ workflow.addConditionalEdges(
     code: "code",
     pdf: "pdf",
     ppt: "ppt",
+    pdfRag: "pdfRag",
+    imgAnalzser: "imgAnalyzer",
   },
 );
 
+workflow.addEdge("search", "chat");
+workflow.addEdge("chat", "__end__");
+workflow.addEdge("code", "__end__");
+workflow.addEdge("pdf", "__end__");
+workflow.addEdge("ppt", "__end__");
+workflow.addEdge("vision", "__end__");
+workflow.addEdge("pdfRag", "__end__");
+workflow.addEdge("imgAnalyzer", "__end__");
 
-workflow.addEdge("search", 'chat')
-workflow.addEdge('chat', '__end__')
-workflow.addEdge('code', '__end__')
-workflow.addEdge('pdf', '__end__')
-workflow.addEdge('ppt', '__end__')
-workflow.addEdge('vision', '__end__')
-
-
-export const graph = workflow.compile()
+export const graph = workflow.compile();

@@ -13,7 +13,7 @@ const groq = new ChatGroq({
   // other params...
 });
 
-const gemini = new ChatGoogle("gemini-2.5-flash");
+const gemini = new ChatGoogle("gemini-3.5-flash");
 
 const openrouter = new ChatOpenRouter({
   model: "deepseek/deepseek-chat",
@@ -29,6 +29,10 @@ export const getModel = (agent) => {
       return groq;
     case "code":
       return openrouter;
+    case "pdfRag":
+      return openrouter;
+    case "imgAnalyzer":
+      return gemini;
 
     default:
       return groq;
