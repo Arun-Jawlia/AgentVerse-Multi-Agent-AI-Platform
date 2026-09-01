@@ -5,14 +5,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const vectorStore = async (docs, collectionName) => {
-  const vector_store = await QdrantVectorStore.fromExistingCollection(
-    docs,
-    embeddings,
-    {
-      url: process.env.QDRANT_URL,
-      collectionName,
-    },
-  );
+  const vector_store = await QdrantVectorStore.fromDocuments(docs, embeddings, {
+    url: process.env.QDRANT_URL,
+    collectionName,
+  });
 
   return vector_store;
 };

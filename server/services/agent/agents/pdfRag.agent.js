@@ -8,14 +8,14 @@ import { deductCredits } from "../utils/deductCredits.js";
 
 export const pdfRagAgent = async (state) => {
   try {
-    const buffer = fs.readFileSync(state.file.path);
+    const buffer = fs.readFileSync(state.file?.path);
     const pdf = new PDFParse({
       data: buffer,
     });
 
-    const result = pdf.getText();
+    const result = await pdf.getText();
 
-    const texts = (await result).text;
+    const texts = result.text;
 
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
@@ -30,7 +30,7 @@ export const pdfRagAgent = async (state) => {
 
     const relevantDocs = await store.similaritySearch(state.prompt, 5);
 
-    const context = relevantDocs.map((d) => d.pageContent).join("/n/n");
+    const context = relevantDocs.map((d) => d.pageContent).join("\n\n");
 
     const llm = await getModel("pdfRag");
 
@@ -52,9 +52,9 @@ export const pdfRagAgent = async (state) => {
         `),
     ];
 
-    const res = llm.invoke(messages);
+    const res = await llm.invoke(messages);
 
-    await deductCredits(state.userId,"pdf");
+    await deductCredits(state.userId, "pdf");
 
     return {
       ...state,
@@ -63,7 +63,7 @@ export const pdfRagAgent = async (state) => {
   } catch (error) {
     return {
       ...state,
-      aiResponse: `Failed to analyze PDF {error.message}`,
+      aiResponse: `Failed to analyze PDF ${error.message}`,
     };
   } finally {
     fs.unlinkSync(state.file.path);

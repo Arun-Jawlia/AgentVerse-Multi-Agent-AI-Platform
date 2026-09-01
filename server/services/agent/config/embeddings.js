@@ -1,10 +1,9 @@
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import { TaskType } from "@google/generative-ai";
+import { OpenAIEmbeddings } from '@langchain/openai';
 import dotenv from 'dotenv'
 
 dotenv.config()
 
 
-export const embeddings = new GoogleGenerativeAIEmbeddings({
-  model: "gemini-embedding-001",
+export const embeddings = new OpenAIEmbeddings({
+  model: "text-embedding-3-small",
 });

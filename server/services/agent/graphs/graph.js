@@ -56,7 +56,7 @@ workflow.addConditionalEdges(
     pdf: "pdf",
     ppt: "ppt",
     pdfRag: "pdfRag",
-    imgAnalzser: "imgAnalyzer",
+    imgAnalyzer: "imgAnalyzer",
   },
 );
 

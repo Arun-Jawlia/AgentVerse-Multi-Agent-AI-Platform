@@ -34,7 +34,7 @@ export const agent = async (req, res) => {
     });
     await addMessage(conversationId, "assistant", response);
 
-    // console.log(response)
+    console.log(response)
     return res.status(200).json({
       answer: response,
       images: result.images || [],

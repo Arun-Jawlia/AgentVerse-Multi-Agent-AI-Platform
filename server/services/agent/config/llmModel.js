@@ -1,5 +1,6 @@
 import { ChatGroq } from "@langchain/groq";
 import { ChatGoogle } from "@langchain/google";
+import {ChatOpenAI} from '@langchain/openai'
 import dotenv from "dotenv";
 import { ChatOpenRouter } from "@langchain/openrouter";
 dotenv.config();
@@ -13,7 +14,19 @@ const groq = new ChatGroq({
   // other params...
 });
 
-const gemini = new ChatGoogle("gemini-3.5-flash");
+// const gemini = new ChatGoogle({
+//   apiKey: process.env.GOOGLE_API_KEY,
+//   model: "gemini-3.5-flash",
+//   temperature: 0,
+// });
+
+
+const openai = new ChatOpenAI({
+  model: "gpt-4o",
+  temperature: 0,
+  apiKey:process.env.OPENAI_API_KEY
+})
+
 
 const openrouter = new ChatOpenRouter({
   model: "deepseek/deepseek-chat",
@@ -30,9 +43,9 @@ export const getModel = (agent) => {
     case "code":
       return openrouter;
     case "pdfRag":
-      return openrouter;
+      return openai;
     case "imgAnalyzer":
-      return gemini;
+      return openai;
 
     default:
       return groq;
