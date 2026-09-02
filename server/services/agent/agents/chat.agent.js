@@ -64,9 +64,10 @@ export const chatAgent = async (state) => {
       aiResponse: response.content,
     };
   } catch (error) {
+    console.log(error)
     return {
       ...state,
-      aiResponse: "Failed to generate response",
+      aiResponse: `Failed to generate CHAT response `,
     };
   }
 };

@@ -76,7 +76,7 @@ export const pptAgent = async (state) => {
     console.log(error);
     return {
       ...state,
-      aiResponse: `Failed To Generate PPT`,
+      aiResponse: `Failed to generate PPT`,
     };
   }
 };

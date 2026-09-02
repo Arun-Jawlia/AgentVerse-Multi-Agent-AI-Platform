@@ -165,7 +165,7 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
               AgentVerse
             </span>
             <span className="text-[10px] font-medium text-indigo-400 ☐ bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full tracking-wide">
-              free
+              {userData?.plan || "free"}
             </span>
             <button
               onClick={handleNewConversation}
@@ -258,7 +258,7 @@ hover:bg-white/5 transition-colors duration-150 bg-transparent border-none curso
                     {userData?.name || "user"}
                   </p>
                   <p className="text-[11px] ☐ text-slate-600 mt-px">
-                    {"Free Plan"}
+                    {`${userData?.plan}`}
                   </p>
                 </div>
                 <div className="flex gap-1">
@@ -291,10 +291,10 @@ hover:text-slate-400 transition-all duration-150"
           </div>
         </div>
       </div>
-        <BillingDrawer
-          open={showBillingPopup}
-          onClose={() => setShowBillingPopup(false)}
-        />
+      <BillingDrawer
+        open={showBillingPopup}
+        onClose={() => setShowBillingPopup(false)}
+      />
     </>
   );
 };

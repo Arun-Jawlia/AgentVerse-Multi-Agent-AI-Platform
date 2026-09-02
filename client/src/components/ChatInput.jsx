@@ -14,7 +14,7 @@ import {
 import { useRef, useState } from "react";
 import { startChat } from "../features/agent";
 import { useDispatch, useSelector } from "react-redux";
-import { addMessage, setArtifacts } from "../redux/messageSlice";
+import { addMessage, setArtifacts, setIsLoading } from "../redux/messageSlice";
 import { createConversation, updateConversation } from "../features/chat";
 import {
   addConversation,
@@ -33,6 +33,7 @@ const ChatInput = () => {
   const handleStartChat = async () => {
     const trimmedValue = value.trim();
     if (!trimmedValue) return;
+    dispatch(setIsLoading(true))
 
     try {
       let conversation = selectedConversation;
@@ -66,11 +67,14 @@ const ChatInput = () => {
       formData.append("prompt", trimmedValue);
       formData.append("conversationId", conversationId);
       formData.append("agent", selectedAgent.toLowerCase());
-      formData.append("file", selectedFile);
+      if (selectedFile) {
+        formData.append("file", selectedFile);
+      }
 
       setValue("");
       const response = await startChat(formData);
-      setSelectedFile(null)
+      dispatch(setIsLoading(false))
+      setSelectedFile(null);
       dispatch(setArtifacts(response?.artifacts || []));
       dispatch(
         addMessage({
@@ -167,18 +171,19 @@ const ChatInput = () => {
                   />
                 )
               )}
-            <div>
-              <p className="text-xs text-white">
-                {selectedFile?.name}
-              </p>
-              <p className="text-[10px] text-slate-500">
-                {Math.ceil(selectedFile.size)}KB
-              </p>
-            </div>
-              <button onClick={()=>{
-                setSelectedFile(null)
-                fileRef.current.value(null)
-              }} className="ml-2 ">
+              <div>
+                <p className="text-xs text-white">{selectedFile?.name}</p>
+                <p className="text-[10px] text-slate-500">
+                  {Math.ceil(selectedFile.size)}KB
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setSelectedFile(null);
+                  fileRef.current.value(null);
+                }}
+                className="ml-2 "
+              >
                 <X size={14} className="text-slate-500 hover:text-white" />
               </button>
             </div>
