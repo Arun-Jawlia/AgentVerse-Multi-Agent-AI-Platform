@@ -6,10 +6,11 @@ import {
   Eye,
   PanelRightClose,
   PanelRightOpen,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { easeInOut, motion } from "motion/react";
+import { AnimatePresence, easeInOut, motion } from "motion/react";
 import Editor from "@monaco-editor/react";
 
 const Artifact = () => {
@@ -18,14 +19,15 @@ const Artifact = () => {
   const [tab, setTab] = useState("code");
   const [activeFile, setActiveFile] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const file = artifacts[0]?.files[activeFile];
   const htmlFile = artifacts[0]?.files?.find((f) => f.name == "index.html");
   const cssFile = artifacts[0]?.files?.find((f) => f.name == "style.css");
   const jsFile = artifacts[0]?.files?.find((f) => f.name == "script.js");
+  if (artifacts?.length == 0) return;
 
   const canPreview = Boolean(htmlFile);
-
 
   const detectLanguage = (filename) => {
     const extensionMap = {
@@ -83,7 +85,6 @@ ${jsFile?.content || ""}
 </body>
 </html>`;
 
-
   const handleCopyCode = async () => {
     await navigator.clipboard.writeText(file?.content || "");
     setCopied(true);
@@ -93,27 +94,116 @@ ${jsFile?.content || ""}
     }, 2000);
   };
 
-  if (artifacts?.length == 0) return;
-
   return (
-    <motion.div
-      initial={{ width: 400 }}
-      animate={{ width: collapsed ? 48 : 400 }}
-      transition={{
-        duration: 0.25,
-        ease: easeInOut,
-      }}
-      className="hidden lg:flex h-full border-l ☐ border-white/6 flex-col overflow-hidden shrink-0 w-[250px]"
-    >
+    <>
+      <button
+        className="lg:hidden fixed bottom-24 right-4 z-40 flex items-center gap-2 px-3.5 py-2 rounded-xl
+         bg-indigo-600 hover:bg-indigo-500 text-white text-[12px] font-medium shadow-lg shadow-indigo-500/20 border-none cursor-pointer 
+         transition-colors duration-150"
+        onClick={() => setMobileOpen(true)}
+      >
+        <Code2 size={13} />
+        View Code
+      </button>
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileOpen(false)}
+              className="lg:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="lg:hidden fixed inset-y-0 right-0 z-50 w-[88vw] max-w-105
+border border-white/6 overflow-hidden"
+            >
+              <PanelContent
+                onClose={() => setMobileOpen(false)}
+                setCollapsed={setCollapsed}
+                artifacts={artifacts}
+                handleCopyCode={handleCopyCode}
+                copied={copied}
+                canPreview={canPreview}
+                setTab={setTab}
+                collapsed={collapsed}
+                tab={tab}
+                activeFile={activeFile}
+                setActiveFile={setActiveFile}
+                previewDoc={previewDoc}
+                detectLanguage={detectLanguage}
+                file={file}
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ width: 400 }}
+        animate={{ width: collapsed ? 48 : 400 }}
+        transition={{
+          duration: 0.25,
+          ease: easeInOut,
+        }}
+        className="hidden lg:flex h-full border-l ☐ border-white/6 flex-col overflow-hidden shrink-0 w-62.5"
+      >
+        <PanelContent
+          onClose={() => setMobileOpen(false)}
+          setCollapsed={setCollapsed}
+          artifacts={artifacts}
+          handleCopyCode={handleCopyCode}
+          copied={copied}
+          canPreview={canPreview}
+          setTab={setTab}
+          collapsed={collapsed}
+          tab={tab}
+          activeFile={activeFile}
+          setActiveFile={setActiveFile}
+          previewDoc={previewDoc}
+          detectLanguage={detectLanguage}
+          file={file}
+        />
+      </motion.div>
+    </>
+  );
+};
+
+export default Artifact;
+
+const PanelContent = ({
+  setCollapsed,
+  artifacts,
+  handleCopyCode,
+  copied,
+  canPreview,
+  setTab,
+  collapsed,
+  tab,
+  activeFile,
+  setActiveFile,
+  previewDoc,
+  detectLanguage,
+  file,
+  onClose,
+}) => {
+  return (
+    <>
       {!collapsed ? (
         <div className="flex flex-col h-full bg-[#0d0f14]">
           <div className="h-14 px-4 border-b border-white/5 flex items-center gap-3 shrink-0">
             <button
-              onClick={() => setCollapsed(true)}
               className="flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-slate-200
            hover:bg-white/5 transition-colors duration-150 bg-transparent border-none cursor-pointer shrink-0"
+              onClick={onClose() ?? (() => setCollapsed(true))}
             >
-              <PanelRightClose size={16} />
+              {onClose ? <X size={15} /> : <PanelRightClose size={16} />}
             </button>
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <div className="flex items-center justify-center w-6 h-6 rounded-md bg-indigo-500/10 border border-indigo-500/20 shrink-0">
@@ -125,11 +215,11 @@ ${jsFile?.content || ""}
             </div>
             <div className="flex items-center gap-1 shrink-0">
               <button
-              onClick={handleCopyCode}
+                onClick={handleCopyCode}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded-lg text-slate-400 hover:text-slate-200
            hover:bg-white/5 transition-colors duration-150 bg-transparent border-none cursor-pointer"
               >
-               {copied ? <Check size={15}/> : <Copy size={15} />}
+                {copied ? <Check size={15} /> : <Copy size={15} />}
               </button>
             </div>
 
@@ -230,8 +320,6 @@ ${jsFile?.content || ""}
           </div>
         </div>
       )}
-    </motion.div>
+    </>
   );
 };
-
-export default Artifact;

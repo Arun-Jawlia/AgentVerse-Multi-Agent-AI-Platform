@@ -56,7 +56,7 @@ export const BillingDrawer = ({ open, onClose }) => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.25 }}
-            className="fixed right-0 top-0 h-screen z-50 w-95 bg-[#0f11117] border-l border-white/10 shadow-2xl flex flex-col"
+            className="fixed right-0 top-0 h-screen z-50 w-95 bg-[#0f1117] border-l border-white/10 shadow-2xl flex flex-col"
           >
             <div className="flex items-center justify-between p-5 border-b border-white/10">
               <div>

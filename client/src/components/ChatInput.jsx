@@ -8,9 +8,10 @@ import {
   Paperclip,
   Presentation,
   Send,
+  X,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { startChat } from "../features/agent";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage, setArtifacts } from "../redux/messageSlice";
@@ -25,6 +26,8 @@ const ChatInput = () => {
   const [value, setValue] = useState("");
   const { selectedConversation } = useSelector((state) => state.conversation);
   const [selectedAgent, setSelectedAgent] = useState("auto");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileRef = useRef(null);
   const dispatch = useDispatch();
 
   const handleStartChat = async () => {
@@ -59,20 +62,21 @@ const ChatInput = () => {
         }),
       );
 
-      const payload = {
-        prompt: trimmedValue,
-        conversationId,
-        agent: selectedAgent.toLowerCase(),
-      };
+      const formData = new FormData();
+      formData.append("prompt", trimmedValue);
+      formData.append("conversationId", conversationId);
+      formData.append("agent", selectedAgent.toLowerCase());
+      formData.append("file", selectedFile);
 
       setValue("");
-      const response = await startChat(payload);
-      dispatch(setArtifacts(response?.artifacts || []))
+      const response = await startChat(formData);
+      setSelectedFile(null)
+      dispatch(setArtifacts(response?.artifacts || []));
       dispatch(
         addMessage({
           role: "assistant",
           content: response?.answer,
-          images: response?.images
+          images: response?.images,
         }),
       );
     } catch (error) {
@@ -118,12 +122,12 @@ const ChatInput = () => {
     },
   ];
 
-const handleKeyDown = (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    handleStartChat()
-  }
-};
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleStartChat();
+    }
+  };
 
   return (
     <div className="w-full overflow-hidden px-3 md:px-5 py-4 border-t border-white/6 bg-[#0d0f14]">
@@ -149,6 +153,37 @@ const handleKeyDown = (e) => {
             );
           })}
         </div>
+
+        {selectedFile && (
+          <div className="my-3">
+            <div className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-2">
+              {selectedFile.type === "application/pdf" ? (
+                <FileText size={16} className="text-red-400" />
+              ) : (
+                selectedFile.type.startsWith("image/") && (
+                  <img
+                    src={URL.createObjectURL(selectedFile)}
+                    className="h-10 w-10 rounded-xl object-cover mt-3"
+                  />
+                )
+              )}
+            <div>
+              <p className="text-xs text-white">
+                {selectedFile?.name}
+              </p>
+              <p className="text-[10px] text-slate-500">
+                {Math.ceil(selectedFile.size)}KB
+              </p>
+            </div>
+              <button onClick={()=>{
+                setSelectedFile(null)
+                fileRef.current.value(null)
+              }} className="ml-2 ">
+                <X size={14} className="text-slate-500 hover:text-white" />
+              </button>
+            </div>
+          </div>
+        )}
         <textarea
           onChange={(e) => setValue(e.target.value)}
           placeholder="Ask Anything..."
@@ -159,10 +194,23 @@ const handleKeyDown = (e) => {
         />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
+            <input
+              type="file"
+              accept=".pdf, image/*"
+              hidden
+              ref={fileRef}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  setSelectedFile(file);
+                }
+              }}
+            />
             <buton
               className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/5 border border-transparent hover:border-white/60
             transition-all duration-150 bg-transparent cursor-pointer
             "
+              onClick={() => fileRef.current.click()}
             >
               <Paperclip size={16} />
             </buton>

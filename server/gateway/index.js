@@ -20,6 +20,8 @@ app.use(
 );
 app.use(cookieParser());
 app.use(morgan("dev"));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use("/api/auth", proxy(process.env.AUTH_SERVICE));
 app.use("/api/chat", protect, proxyWithHeader(process.env.CHAT_SERVICE));
