@@ -23,7 +23,7 @@ export const login = async (req, res, next) => {
 
     const sessionId = crypto.randomUUID();
     await redis.set(
-      `user-session-${user._id}`,
+      `user-session-${user?._id}`,
       sessionId,
       "EX",
       7 * 24 * 60 * 60,

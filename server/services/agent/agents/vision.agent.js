@@ -3,9 +3,11 @@ import axios from "axios";
 import { uploadToS3 } from "../utils/uploadToS3.js";
 import { getFromS3 } from "../utils/getFromS3.js";
 import { deductCredits } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimit.js";
 
 export const imageGenAgent = async (state) => {
   try {
+    await checkAgentLimit(state.userId, "image");
     const llm = await getModel("vision");
     const res = await llm.invoke(
       `
@@ -60,10 +62,9 @@ export const imageGenAgent = async (state) => {
       aiResponse: customiseRes,
     };
   } catch (error) {
-    console.log(error);
     return {
       ...state,
-      aiResponse: "❌ Failed to generate image",
+      aiResponse: `${error?.data?.message || "Failed to generate Image "}`,
     };
   }
 };

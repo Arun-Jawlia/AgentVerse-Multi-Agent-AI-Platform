@@ -3,11 +3,11 @@ import { addMessage } from "../config/llmMemory.js";
 import { graph } from "../graphs/graph.js";
 import axios from "axios";
 
-export const agent = async (req, res) => {
+export const agent = async (req, res, next) => {
   try {
     const { prompt, conversationId, agent } = req.body;
-    const file = req.file
-    const userId = req.headers['x-user-id']
+    const file = req.file;
+    const userId = req.headers["x-user-id"];
 
     await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
       conversationId,
@@ -21,7 +21,7 @@ export const agent = async (req, res) => {
       conversationId,
       agent,
       userId,
-      file
+      file,
     });
 
     const response = result.aiResponse;
@@ -30,20 +30,17 @@ export const agent = async (req, res) => {
       role: "assistant",
       content: response,
       images: result.images,
-      artifacts: result.artifacts
+      artifacts: result.artifacts,
     });
     await addMessage(conversationId, "assistant", response);
 
-    console.log(response)
+    console.log(response);
     return res.status(200).json({
       answer: response,
       images: result.images || [],
-      artifacts: result.artifacts || []
+      artifacts: result.artifacts || [],
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: `agent error: ${error.message}`,
-    });
+    next(error);
   }
 };

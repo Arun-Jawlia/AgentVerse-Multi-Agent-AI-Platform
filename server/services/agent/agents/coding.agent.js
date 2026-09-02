@@ -1,13 +1,17 @@
 import { ChatOpenRouter } from "@langchain/openrouter";
 import { getModel } from "../config/llmModel.js";
 import { deductCredits } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimit.js";
 
 export const codingAgent = async (state) => {
-  const intentLLM = await getModel("intent");
-  const llm = await getModel("code");
+  try {
+    const intentLLM = await getModel("intent");
+    const llm = await getModel("code");
 
-  const intentResponse = await intentLLM.invoke(
-    `
+    await checkAgentLimit(state.userId, "coding");
+
+    const intentResponse = await intentLLM.invoke(
+      `
         You are a intent classifier.
 
         Return ONLY one of these values.
@@ -22,12 +26,12 @@ export const codingAgent = async (state) => {
         User Request:
         ${state.prompt}
     `,
-  );
+    );
 
-  const intent = intentResponse.content;
+    const intent = intentResponse.content;
 
-  if (intent == "CODE_GENERATION") {
-    const prompt = `
+    if (intent == "CODE_GENERATION") {
+      const prompt = `
         You are AgentVerse Coding Agent.
 
         Generate the requested project.
@@ -94,26 +98,26 @@ export const codingAgent = async (state) => {
         
     `;
 
-    const res = await llm.invoke(prompt);
-    // console.log(res)
-    await deductCredits(state.userId, "coding");
-    const content = JSON.parse(res.content);
+      const res = await llm.invoke(prompt);
+      // console.log(res)
+      await deductCredits(state.userId, "coding");
+      const content = JSON.parse(res.content);
 
-    return {
-      ...state,
-      aiResponse: "Code generated successfully",
-      artifacts: [
-        {
-          id: Date.now(),
-          type: "Project",
-          files: content.files || [],
-          title: state.prompt,
-        },
-      ],
-    };
-  }
+      return {
+        ...state,
+        aiResponse: "Code generated successfully",
+        artifacts: [
+          {
+            id: Date.now(),
+            type: "Project",
+            files: content.files || [],
+            title: state.prompt,
+          },
+        ],
+      };
+    }
 
-  const res = await llm.invoke(`
+    const res = await llm.invoke(`
         The user's request is:
         ${intent}
 
@@ -131,11 +135,17 @@ export const codingAgent = async (state) => {
         ${state.prompt}
     `);
 
-  await deductCredits(state.userId, "coding");
+    await deductCredits(state.userId, "coding");
 
-  return {
-    ...state,
-    aiResponse: res.data,
-    artifacts: [],
-  };
+    return {
+      ...state,
+      aiResponse: res.data,
+      artifacts: [],
+    };
+  } catch (error) {
+    return {
+      ...state,
+      aiResponse: `${error?.data?.message || 'Failed to generate code'}`,
+    };
+  }
 };
