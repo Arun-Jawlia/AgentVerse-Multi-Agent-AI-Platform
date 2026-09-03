@@ -5,13 +5,14 @@ import {
   ImageIcon,
   MessageSquare,
   Mic,
+  MicOff,
   Paperclip,
   Presentation,
   Send,
   X,
   Zap,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { startChat } from "../features/agent";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage, setArtifacts, setIsLoading } from "../redux/messageSlice";
@@ -25,16 +26,153 @@ import {
 const ChatInput = () => {
   const [value, setValue] = useState("");
   const { selectedConversation } = useSelector((state) => state.conversation);
-  const {isLoading} = useSelector(state=>state.message)
+  const { isLoading } = useSelector((state) => state.message);
   const [selectedAgent, setSelectedAgent] = useState("auto");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef(null);
+  const transcriptRef = useRef("");
+
   const fileRef = useRef(null);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
+    recognition.onresult = (event) => {
+      let transcript = "";
+
+      for (
+        let index = event.resultIndex;
+        index < event.results.length;
+        index++
+      ) {
+        transcript += event.results[index][0].transcript;
+      }
+
+      console.log(transcript);
+      setValue(transcript);
+    };
+
+    recognition.onend = () => {
+      setListening(false);
+    };
+
+    recognitionRef.current = recognition;
+  }, []);
+
+  const toggleMic = () => {
+    if (!recognitionRef.current) {
+      alert("Speech recognition not supported");
+    }
+
+    if (listening) {
+      recognitionRef.current.stop();
+      setListening(false);
+    } else {
+      recognitionRef.current.start();
+      setListening(true);
+    }
+  };
+
+  // useEffect(() => {
+  //   const SpeechRecognition =
+  //     window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  //   if (!SpeechRecognition) {
+  //     return;
+  //   }
+
+  //   const recognition = new SpeechRecognition();
+
+  //   recognition.lang = "en-US";
+  //   recognition.continuous = true;
+  //   recognition.interimResults = true;
+
+  //   recognition.onstart = () => {
+  //     setListening(true);
+  //   };
+
+  //   recognition.onresult = (event) => {
+  //     let finalTranscript = "";
+  //     let interimTranscript = "";
+
+  //     for (let i = event.resultIndex; i < event.results.length; i++) {
+  //       const result = event.results[i];
+
+  //       if (result.isFinal) {
+  //         finalTranscript += result[0].transcript;
+  //       } else {
+  //         interimTranscript += result[0].transcript;
+  //       }
+  //     }
+
+  //     // Store only finalized speech permanently
+  //     if (finalTranscript) {
+  //       transcriptRef.current += finalTranscript;
+  //     }
+
+  //     // Update UI with final + current interim speech
+  //     setValue(`${transcriptRef.current} ${interimTranscript}`.trim());
+  //   };
+
+  //   recognition.onerror = (event) => {
+  //     console.error("Speech recognition error:", event.error);
+
+  //     // Ignore normal termination errors
+  //     if (event.error === "aborted" || event.error === "no-speech") {
+  //       return;
+  //     }
+
+  //     setListening(false);
+  //   };
+
+  //   recognition.onend = () => {
+  //     setListening(false);
+  //   };
+
+  //   recognitionRef.current = recognition;
+
+  //   return () => {
+  //     recognition.stop();
+  //     recognitionRef.current = null;
+  //   };
+  // }, []);
+
+  // const toggleMic = () => {
+  //   const recognition = recognitionRef.current;
+
+  //   if (!recognition) {
+  //     alert("Speech recognition is not supported in this browser.");
+  //     return;
+  //   }
+
+  //   if (listening) {
+  //     recognition.stop();
+  //     setListening(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     recognition.start();
+  //   } catch (error) {
+  //     console.error("Failed to start speech recognition:", error);
+  //   }
+  // };
 
   const handleStartChat = async () => {
     const trimmedValue = value.trim();
     if (!trimmedValue) return;
-    dispatch(setIsLoading(true))
+    dispatch(setIsLoading(true));
 
     try {
       let conversation = selectedConversation;
@@ -74,7 +212,7 @@ const ChatInput = () => {
 
       setValue("");
       const response = await startChat(formData);
-      dispatch(setIsLoading(false))
+      dispatch(setIsLoading(false));
       setSelectedFile(null);
       dispatch(setArtifacts(response?.artifacts || []));
       dispatch(
@@ -221,11 +359,12 @@ const ChatInput = () => {
               <Paperclip size={16} />
             </buton>
             <buton
-              className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/5 border border-transparent hover:border-white/60
-            transition-all duration-150 bg-transparent cursor-pointer
-            "
+              className={`flex items-center justify-center w-8 h-8 rounded-lg border  hover:border-white/60
+            transition-all duration-150 cursor-pointer ${listening ? "bg-red-500 text-white" : "text-slate-600 hover:bg-white/5"}
+            `}
+              onClick={toggleMic}
             >
-              <Mic size={16} />
+              {listening ? <Mic size={16} /> : <MicOff size={16} />}
             </buton>
           </div>
           <button
