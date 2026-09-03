@@ -11,7 +11,7 @@ const MessageList = () => {
 
   useEffect(() => {
     requestAnimationFrame(() => {
-      bottomRef?.current.scrollIntoView({
+      bottomRef?.current?.scrollIntoView({
         behaviour: "smooth",
         block: "end",
       });
