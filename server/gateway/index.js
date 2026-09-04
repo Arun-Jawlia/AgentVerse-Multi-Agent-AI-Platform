@@ -30,7 +30,7 @@ app.use("/api/billing", protect, proxyWithHeader(process.env.BILLING_SERVICE));
 app.use("/api/me", protect, getCurrentUser);
 
 app.get("/health", (req, res) => {
-  res.json({ msg: "API Gateway", health: "OK" });
+  res.json({ msg: "API Gateway ", health: "OK", version: 1 });
 });
 
 app.listen(port, () => {
