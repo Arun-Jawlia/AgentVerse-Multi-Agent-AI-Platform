@@ -192,7 +192,7 @@ This allows complex requests to be broken down into smaller, specialized tasks.
 - Redis
 - Docker
 - Docker Compose
-- Nginx
+- AWS Deployment
 - CI/CD
 
 ### Generated Artifacts
