@@ -62,51 +62,39 @@ jobs:
 
       - name: Build Chat
         run: |
-          docker build \
-          -f server/services/chat/Dockerfile \
-          -t chat-service server
+          docker build -f server/services/chat/Dockerfile -t chat-service server
 
       - name: tag Chat
         run: |
-          docker tag chat-service:latest \
-          $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/chat-service:latest
+          docker tag chat-service:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/chat-service:latest
 
       - name: push Chat
         run: |
-          docker push \
-          $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/chat-service:latest
+          docker push  $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/chat-service:latest
 
       - name: Build Agent
         run: |
-          docker build \
-          -f server/services/agent/Dockerfile \
-          -t agent-service server
+          docker build -f server/services/agent/Dockerfile -t agent-service server
 
       - name: tag Agent
         run: |
-          docker tag agent-service:latest \
-          $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/agent-service:latest
+          docker tag agent-service:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/agent-service:latest
 
       - name: push Agent
         run: |
-          docker push \
-          $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/agent-service:latest
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/agent-service:latest
 
       - name: Build Billing
         run: |
-          docker build \
-          -f server/services/billing/Dockerfile \
-          -t billing-service server
+          docker build -f server/services/billing/Dockerfile -t billing-service server
 
       - name: tag Billing
         run: |
-          docker tag billing-service:latest \
-          $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/billing-service:latest
+          docker tag billing-service:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/billing-service:latest
 
       - name: push Billing
         run: |
-          docker push \
-          $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/billing-service:latest
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/billing-service:latest
 
       - name: deploy gateway
         run: |
