@@ -1,14 +1,14 @@
-FROM node
+FROM node:22-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY ./services/chat/package*.json ./services/chat/
 
-RUN cd services/chat && npm install
+RUN cd services/chat && npm ci
 
 COPY services/chat ./services/chat
 

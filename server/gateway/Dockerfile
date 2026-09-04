@@ -1,15 +1,16 @@
-FROM node
+FROM node:22-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
-COPY ./gateway/package*.json ./gateway/
+COPY ./gateway/package*.json ./gateway/ 
 
-RUN cd gateway && npm install
+RUN cd gateway && npm ci
 
+# Source Code
 COPY gateway ./gateway
 
 COPY shared ./shared
