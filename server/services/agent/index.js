@@ -28,8 +28,9 @@ app.use((err, req, res, next) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({ msg: "This is Agent Service" });
+  res.json({ msg: "Agent Service", health: "OK" });
 });
+
 
 const startServer = async () => {
   try {

@@ -17,9 +17,10 @@ app.use(cors({
 
 app.use("/", ChatRoutes)
 
-app.get("/", (req, res) => {
-  res.json({ msg: "This is Chat Service" });
+app.get("/health", (req, res) => {
+  res.json({ msg: "Chat Service", health: "OK" });
 });
+
 
 const startServer = async () => {
   try {

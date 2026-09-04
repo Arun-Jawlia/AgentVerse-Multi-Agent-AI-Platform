@@ -20,8 +20,8 @@ app.use(
 );
 app.use(cookieParser());
 app.use(morgan("dev"));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/api/auth", proxy(process.env.AUTH_SERVICE));
 app.use("/api/chat", protect, proxyWithHeader(process.env.CHAT_SERVICE));
@@ -29,8 +29,8 @@ app.use("/api/agent", protect, proxyWithHeader(process.env.AGENT_SERVICE));
 app.use("/api/billing", protect, proxyWithHeader(process.env.BILLING_SERVICE));
 app.use("/api/me", protect, getCurrentUser);
 
-app.get("/", (req, res) => {
-  res.json({ msg: "This is API Gateway" });
+app.get("/health", (req, res) => {
+  res.json({ msg: "API Gateway", health: "OK" });
 });
 
 app.listen(port, () => {

@@ -46,8 +46,8 @@ export const login = async (req, res, next) => {
 
     res.cookie("session", sessionId, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "development" ? false : true,
+      sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -67,8 +67,8 @@ export const logout = async (req, res) => {
     if (!sessionId) {
       res.clearCookie("session", {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: process.env.NODE_ENV === "development" ? false : true,
+        sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
       });
 
       return res.status(200).json({
@@ -93,8 +93,8 @@ export const logout = async (req, res) => {
     // Clear browser cookie
     res.clearCookie("session", {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "development" ? false : true,
+      sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
     });
 
     return res.status(200).json({
