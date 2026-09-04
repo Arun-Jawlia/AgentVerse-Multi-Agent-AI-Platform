@@ -94,6 +94,8 @@ ${jsFile?.content || ""}
     }, 2000);
   };
 
+  console.log(mobileOpen)
+
   return (
     <>
       <button

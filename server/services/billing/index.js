@@ -16,9 +16,10 @@ app.use(cors({
 
 app.use("/", BillingRoutes);
 
-app.get("/", (req, res) => {
-  res.json({ msg: "This is billing Services" });
+app.get("/health", (req, res) => {
+  res.json({ msg: "Billing Service", health: "OK" });
 });
+
 
 const startServer = async () => {
   try {
